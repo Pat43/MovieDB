@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="model">
+	<class
+		name="Movie"
+		table="movie"
+	>
+		<id
+			name="id"
+			type="integer"
+			column="id_movie"
+		>
+			<generator class="identity"/>
+		</id>
+
+		<property
+			name="image"
+			column="image_movie"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="country"
+			column="country_movie"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		<property
+			name="vo"
+			column="vo_movie"
+			type="boolean"
+			not-null="false"
+		/>
+		<property
+			name="name"
+			column="name_movie"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		<property
+			name="file"
+			column="file_movie"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="synopsis"
+			column="synopsis_movie"
+			type="string"
+			not-null="false"
+			length="800"
+		/>
+		<property
+			name="language"
+			column="language_movie"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+
+		<bag name="genres" table="genre_movie">
+			<key column="id_movie" />
+			<many-to-many class="Genre"
+				column="id_genre" />
+		</bag>
+
+	</class>
+</hibernate-mapping>

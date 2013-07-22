@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="model">
+	<class
+		name="Genre"
+		table="genre"
+	>
+		<id
+			name="id"
+			type="integer"
+			column="id_genre"
+		>
+			<generator class="identity"/>
+		</id>
+
+		<property
+			name="label"
+			column="label_genre"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		
+	</class>
+</hibernate-mapping>
