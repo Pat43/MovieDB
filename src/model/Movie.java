@@ -1,6 +1,7 @@
 package model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Movie {	
@@ -14,6 +15,13 @@ public class Movie {
 	String language;
 	boolean vo;
 	List<Genre> genres;
+	
+	public List<Integer> getGenreIds(){
+		List<Integer> ids = new ArrayList<>();
+		for(Genre genre : genres)
+			ids.add(genre.getId());
+		return ids;
+	}
 	
 	
 	public int getId() {
