@@ -24,19 +24,6 @@
 			length="255"
 		/>
 		<property
-			name="country"
-			column="country_movie"
-			type="string"
-			not-null="false"
-			length="100"
-		/>
-		<property
-			name="vo"
-			column="vo_movie"
-			type="boolean"
-			not-null="false"
-		/>
-		<property
 			name="name"
 			column="name_movie"
 			type="string"
@@ -57,13 +44,9 @@
 			not-null="false"
 			length="800"
 		/>
-		<property
-			name="language"
-			column="language_movie"
-			type="string"
-			not-null="false"
-			length="100"
-		/>
+		
+		<many-to-one name="language" column="id_language" class="Language"/>
+		
 
 		<bag name="genres" table="genre_movie">
 			<key column="id_movie" />

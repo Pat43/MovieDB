@@ -2,6 +2,7 @@ package movieDB;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,9 +16,15 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
+
+
+
 import dao.GenreDAO;
+import dao.LanguageDAO;
 import dao.MovieDAO;
 import model.Genre;
+import model.Language;
 import model.Movie;
 import util.MyWriter;
 
@@ -64,18 +71,22 @@ public class Home extends HttpServlet {
 		
 		String p_movieTitle = request.getParameter("movie_title");
 		String p_movieGenre = request.getParameter("movie_genre");
+		String[] p_movieLang = request.getParameterValues("movie_lang");
 		
 		
 		MovieDAO movieDAO = new MovieDAO();
+		GenreDAO genreDAO = new GenreDAO();
+		LanguageDAO languageDAO = new LanguageDAO();
 		
 		List<Movie> moviesToDisplay = null;
+		List<Genre> genres = genreDAO.getAll();
+		List<Language> languages = languageDAO.getAll();
+		
 		if(request.getParameterMap().isEmpty())
 			moviesToDisplay = movieDAO.getAll();
 		else
-			moviesToDisplay = movieDAO.findByCriteria(p_movieTitle, p_movieGenre);
+			moviesToDisplay = movieDAO.findByCriteria(p_movieTitle, p_movieGenre, p_movieLang);
 		
-		GenreDAO genreDAO = new GenreDAO();
-		List<Genre> genres = genreDAO.getAll();
 		
 		// Web content :
 		response.setContentType("text/html"); 
@@ -104,6 +115,17 @@ public class Home extends HttpServlet {
 				form += "selected='selected' ";
 			form += "value='"+genre.getId()+"'>"+genre.getLabel()+"</option'>";
 		}
+		form += "</select> ";
+		
+		// Search by language :
+		form += "Language : "+"<select name='movie_lang' multiple='multiple'>";
+		for(Language language : languages){
+			form += "<option ";
+			if(p_movieLang != null && ! p_movieLang.equals("") &&  Arrays.asList(p_movieLang).contains(String.valueOf(language.getId())))
+				form += "selected='selected' ";
+			form += "value='"+language.getId()+"'>"+language.getLabel()+"</option'>";
+		}
+		form += "</select> ";
 		
 		// submit			
 		form += "<input type='submit' value='"+Messages.getString("Home.rechercher")+"'>" +
@@ -116,13 +138,14 @@ public class Home extends HttpServlet {
 		
 		java.util.Collections.reverse(moviesToDisplay);		
 		for(Movie movie : moviesToDisplay){
-			out.println("<a href=movieinfos?ref="+movie.getId()+">"+movie.getName()+"</a> ");
+			out.println("<a href=movieinfos?ref="+movie.getId()+">"+movie.getName()+"</a> // ");
 			Iterator<Genre> genreIt = movie.getGenres().iterator();
 			while(genreIt.hasNext()){
 				out.println(genreIt.next().getLabel());
 				if(genreIt.hasNext())
 					out.println(", ");
 			}
+			out.println(" // "+movie.getLanguage().getLabel());
 			out.println("<br>");
 		}
 		

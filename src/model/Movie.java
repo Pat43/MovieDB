@@ -11,9 +11,7 @@ public class Movie {
 	File file;
 	File image;
 	String synopsis;
-	String country;
-	String language;
-	boolean vo;
+	Language language;
 	List<Genre> genres;
 	
 	public List<Integer> getGenreIds(){
@@ -54,24 +52,18 @@ public class Movie {
 	public void setSynopsis(String synopsis) {
 		this.synopsis = synopsis;
 	}
-	public String getCountry() {
-		return country;
-	}
-	public void setCountry(String country) {
-		this.country = country;
-	}
-	public String getLanguage() {
+
+
+	public Language getLanguage() {
 		return language;
 	}
-	public void setLanguage(String language) {
+
+
+	public void setLanguage(Language language) {
 		this.language = language;
 	}
-	public boolean isVo() {
-		return vo;
-	}
-	public void setVo(boolean vo) {
-		this.vo = vo;
-	}
+
+
 	public List<Genre> getGenres() {
 		return genres;
 	}

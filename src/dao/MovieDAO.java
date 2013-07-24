@@ -1,6 +1,8 @@
 package dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,7 +15,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import util.HibernateUtil;
-import model.Genre;
 import model.Movie;
 
 /**
@@ -35,6 +36,7 @@ public class MovieDAO {
 			transaction = session.beginTransaction();
 			movie = (Movie) session.get(Movie.class, id);
 			Hibernate.initialize(movie.getGenres());
+			Hibernate.initialize(movie.getLanguage());
 			transaction.commit();
 		}catch(HibernateException he) {
 			he.printStackTrace();
@@ -59,8 +61,10 @@ public class MovieDAO {
 			transaction = session.beginTransaction();
 			Query query = session.createQuery("from Movie");
 			movies = query.list();
-			for(Movie movie : movies)
+			for(Movie movie : movies){
 				Hibernate.initialize(movie.getGenres());
+				Hibernate.initialize(movie.getLanguage());
+			}
 			
 			transaction.commit();
 		}catch(HibernateException he) {
@@ -78,7 +82,7 @@ public class MovieDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Movie> findByCriteria(String movieName, String movieGenre){
+	public List<Movie> findByCriteria(String movieName, String movieGenre, String[] movieLang){
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		List<Movie> movies = null;
@@ -91,11 +95,15 @@ public class MovieDAO {
 			
 			movies = criteria.list();
 			
+			List<String> movieLangList = Arrays.asList(movieLang);
+			
 			Iterator<Movie> movieIt = movies.iterator();
 			while(movieIt.hasNext()){
 				Movie movie = movieIt.next();
 				Hibernate.initialize(movie.getGenres());
 				if(movieGenre != "" && ! movie.getGenreIds().contains(Integer.parseInt(movieGenre)))
+					movieIt.remove();
+				else if(!movieLangList.isEmpty() &&  !movieLangList.contains(String.valueOf(movie.getLanguage().getId())))
 					movieIt.remove();
 			}
 			

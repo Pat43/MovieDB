@@ -29,5 +29,6 @@
 		</property>
 		<mapping resource="model/Movie.hbm.xml" />
 		<mapping resource="model/Genre.hbm.xml" />
+		<mapping resource="model/Language.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
