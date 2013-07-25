@@ -1,6 +1,5 @@
 package dao;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -14,7 +13,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
+import util.Comparators;
 import util.HibernateUtil;
+import model.Genre;
 import model.Movie;
 
 /**
@@ -82,7 +83,7 @@ public class MovieDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Movie> findByCriteria(String movieName, String movieGenre, String[] movieLang){
+	public List<Movie> findByCriteria(String movieName, String[] movieGenre, String[] movieLang, String sortBy){
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		List<Movie> movies = null;
@@ -95,17 +96,38 @@ public class MovieDAO {
 			
 			movies = criteria.list();
 			
-			List<String> movieLangList = Arrays.asList(movieLang);
+			List<String> movieLangList = null;
+			List<String> movieGenreList = null;
+			
+			if(movieLang != null)
+				movieLangList= Arrays.asList(movieLang);
+			if(movieGenre != null)
+				movieGenreList = Arrays.asList(movieGenre);
 			
 			Iterator<Movie> movieIt = movies.iterator();
 			while(movieIt.hasNext()){
 				Movie movie = movieIt.next();
 				Hibernate.initialize(movie.getGenres());
-				if(movieGenre != "" && ! movie.getGenreIds().contains(Integer.parseInt(movieGenre)))
-					movieIt.remove();
-				else if(!movieLangList.isEmpty() &&  !movieLangList.contains(String.valueOf(movie.getLanguage().getId())))
+				Hibernate.initialize(movie.getLanguage());
+				if(movieGenreList != null){
+					boolean delete = true;
+					for(Genre genre : movie.getGenres())
+						if(movieGenreList.contains(String.valueOf(genre.getId()))){
+							delete = false;
+						}
+					if(delete)
+						movieIt.remove();
+				}
+				else if(movieLangList != null &&  !movieLangList.contains(String.valueOf(movie.getLanguage().getId())))
 					movieIt.remove();
 			}
+			
+			if(sortBy.equals("abc"))
+				Collections.sort(movies, new Comparators.AbcComparator());
+			else if(sortBy.equals("genre"))
+				Collections.sort(movies, new Comparators.genreComparator(Arrays.asList(movieGenre)));
+			else if(sortBy.equals("lang"))
+				Collections.sort(movies, new Comparators.languageComparator());
 			
 			transaction.commit();
 			
